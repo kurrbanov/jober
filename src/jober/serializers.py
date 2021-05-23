@@ -22,7 +22,7 @@ class SkillSerializer(serializers.ModelSerializer):
 
 
 class ApplicantShowSerializer(serializers.ModelSerializer):
-    skills = SkillSerializer(many=True)
+    skills = SkillSerializer(many=True, read_only=True)
     likes = serializers.SlugRelatedField(many=True, read_only=True, slug_field='value')
     matches = serializers.SlugRelatedField(many=True, read_only=True, slug_field='value')
 

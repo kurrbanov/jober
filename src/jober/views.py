@@ -235,3 +235,93 @@ class GetApplicant(APIView):
                 response_list.add(applicant.id)
 
         return Response({"applicants_id": list(response_list)}, status=status.HTTP_200_OK)
+
+
+class ValidSkills:
+    @staticmethod
+    def check(skill):
+        for elem in SKILLS:
+            if skill == elem[1]:
+                return [True, elem[0]]
+
+        return [False, -1]
+
+
+class ApplicantUpdateView(APIView):
+    @staticmethod
+    def patch(request, applicant_id):
+        applicant = Applicant.objects.filter(id=applicant_id)
+
+        if len(applicant) == 0:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        applicant = applicant[0]
+
+        for fields in request.data:
+            if fields == 'name' or fields == 'surname':
+                if len(request.data[fields]) > 25:
+                    return Response(status=status.HTTP_400_BAD_REQUEST)
+                if fields == 'name':
+                    applicant.name = request.data[fields]
+                else:
+                    applicant.surname = request.data[fields]
+            elif fields == 'skills':
+                applicant.skills.clear()
+                for skill in request.data[fields]:
+                    if not ValidSkills.check(skill)[0]:
+                        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+                for skill in request.data[fields]:
+                    sk = Skill.objects.create(value=ValidSkills.check(skill)[1])
+                    sk.save()
+                    applicant.skills.add(sk)
+                    applicant.save()
+            elif fields == 'relocate':
+                applicant.relocate = request.data[fields]
+            elif fields == 'email':
+                applicant.email = request.data[fields]
+            elif fields == 'age':
+                applicant.age = request.data[fields]
+            elif fields == 'region':
+                applicant.region = request.data[fields]
+
+            applicant.save()
+
+        return Response(ApplicantShowSerializer(Applicant.objects.filter(id=applicant_id)[0]).data,
+                        status=status.HTTP_200_OK)
+
+
+class CompanyUpdateView(APIView):
+    @staticmethod
+    def patch(request, company_id):
+        company = Company.objects.filter(id=company_id)
+
+        if len(company) == 0:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        company = company[0]
+
+        for field in request.data:
+            if field == 'name':
+                if len(request.data['name']) > 25:
+                    return Response(status=status.HTTP_400_BAD_REQUEST)
+                company.name = request.data['name']
+            elif field == 'skills':
+                company.skills.clear()
+                for skill in request.data[field]:
+                    if not ValidSkills.check(skill)[0]:
+                        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+                for skill in request.data[field]:
+                    sk = Skill.objects.create(value=ValidSkills.check(skill)[1])
+                    sk.save()
+                    company.skills.add(sk)
+                    company.save()
+            elif field == 'age':
+                company.age = request.data[field]
+            elif field == 'region':
+                company.region = request.data[field]
+            elif field == 'desc':
+                company.desc = request.data[field]
+
+            company.save()
