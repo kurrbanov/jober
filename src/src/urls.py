@@ -11,5 +11,7 @@ urlpatterns = [
     path('show/applicant/', views.GetApplicant.as_view()),
     path('show/company/', views.GetCompanies.as_view()),
     path('applicant/<int:applicant_id>', views.ApplicantUpdateView.as_view()),
-    path('company/<int:company_id>', views.CompanyUpdateView.as_view())
+    path('company/<int:company_id>', views.CompanyUpdateView.as_view()),
+    path('applicant/<int:applicant_id>', views.ApplicantDeleteView.as_view()),
+    path('company/<int:company_id>', views.CompanyDeleteView.as_view())
 ]

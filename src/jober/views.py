@@ -12,8 +12,9 @@ SKILLS = [
         ('5', 'VUE.js'),
         ('6', 'React'),
         ('7', 'C#'),
-        ('8', 'ASP.NET')
-    ]
+        ('8', 'ASP.NET'),
+        ('9', 'Cooking')
+]
 
 
 class ApplicantView(APIView):
@@ -325,3 +326,27 @@ class CompanyUpdateView(APIView):
                 company.desc = request.data[field]
 
             company.save()
+
+        return Response(CompanyShowSerializer(company).data, status=status.HTTP_200_OK)
+
+
+class ApplicantDeleteView(APIView):
+    @staticmethod
+    def delete(request, applicant_id, *args, **kwargs):
+        snippet = Applicant.objects.filter(id=applicant_id)
+        if len(snippet) == 0:
+            return Response({"Bad Request": "No applicant with such id"}, status=status.HTTP_400_BAD_REQUEST)
+
+        snippet[0].delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CompanyDeleteView(APIView):
+    @staticmethod
+    def delete(request, company_id, *args, **kwargs):
+        snippet = Company.objects.filter(id=company_id)
+        if len(snippet) == 0:
+            return Response({"Bad Request": "No company with such id"}, status=status.HTTP_400_BAD_REQUEST)
+
+        snippet[0].delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

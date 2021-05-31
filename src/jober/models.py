@@ -18,7 +18,8 @@ class Skill(models.Model):
         ('5', 'VUE.js'),
         ('6', 'React'),
         ('7', 'C#'),
-        ('8', 'ASP.NET')
+        ('8', 'ASP.NET'),
+        ('9', 'Cooking'),
     ]
     value = models.CharField(choices=skill, max_length=3, default='1')
 
