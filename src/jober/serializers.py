@@ -29,7 +29,7 @@ class ApplicantShowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Applicant
         fields = ['id', 'name', 'surname', 'age', 'region', 'email', 'skills', 'relocate', 'desc',
-                  'likes', 'matches']
+                  'likes', 'dislike', 'matches']
 
 
 class ApplicantSerializer(serializers.ModelSerializer):
@@ -38,7 +38,7 @@ class ApplicantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Applicant
         fields = ['id', 'name', 'surname', 'age', 'region', 'email', 'skills', 'relocate', 'desc',
-                  'likes', 'matches']
+                  'likes', 'dislike', 'matches']
 
     def create(self, validated_data):
         skills = validated_data.pop('skills')

@@ -151,20 +151,49 @@ class LikeToApplicant(APIView):
         return Response({"Like to:": request.data['applicant_id']}, status=status.HTTP_202_ACCEPTED)
 
 
-class GetCompanies(APIView):
+class DislikeToCompany(APIView):
     """
-    Request:
     {
+        "company_id": 1,
         "applicant_id": 1
     }
-
-    Response:
-    {
-        id: [1, 2, ...]
-    }
-
-    Priority: Match, skills(at least one) + region, likes
     """
+    @staticmethod
+    def post(request, *args, **kwargs):
+        applicant = Applicant.objects.filter(id=request.data['applicant_id'])
+        company = Company.objects.filter(id=request.data['company_id'])
+
+        if len(applicant) == 0 or len(company) == 0:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        applicant = applicant[0]
+        company = company[0]
+
+        applicant.dislike.add(company)
+        applicant.save()
+
+        return Response({"Dislike to": request.data['company_id']}, status=status.HTTP_200_OK)
+
+
+class DislikeToApplicant(APIView):
+    @staticmethod
+    def post(request, *args, **kwargs):
+        applicant = Applicant.objects.filter(id=request.data['applicant_id'])
+        company = Company.objects.filter(id=request.data['company_id'])
+
+        if len(applicant) == 0 or len(company) == 0:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        applicant = applicant[0]
+        company = company[0]
+
+        company.dislike.add(applicant)
+        company.save()
+
+        return Response({"Dislike to": request.data['applicant_id']}, status=status.HTTP_200_OK)
+
+
+class GetCompanies(APIView):
     @staticmethod
     def post(request, *args, **kwargs):
         applicant = Applicant.objects.filter(id=request.data['applicant_id'])
@@ -188,7 +217,14 @@ class GetCompanies(APIView):
             for skill in company.skills.all():
                 set_skills_cmp.add(skill.value)
 
+            flag = False
+
             if len(set_skills_apl & set_skills_cmp):
+                for dis in applicant.dislike:
+                    if dis.id == company.id:
+                        flag = True
+                if flag:
+                    continue
                 if applicant.relocate:
                     response_list.add(company.id)
                 else:
@@ -224,7 +260,14 @@ class GetApplicant(APIView):
             for skill in applicant.skills.all():
                 set_applicant_skills.add(skill.value)
 
+            flag = False
             if len(set_applicant_skills & set_company_skills):
+                for dis in company.dislike:
+                    if dis == applicant.id:
+                        flag = True
+
+                if flag:
+                    continue
                 if applicant.region == company.region:
                     response_list.add(applicant.id)
                 elif applicant.relocate:

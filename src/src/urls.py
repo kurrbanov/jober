@@ -8,6 +8,8 @@ urlpatterns = [
     path('company/', views.CompanyView.as_view()),
     path('like/company/', views.LikeToCompany.as_view()),
     path('like/applicant/', views.LikeToApplicant.as_view()),
+    path('dislike/appicant/', views.DislikeToApplicant.as_view()),
+    path('dislike/company/', views.DislikeToCompany.as_view()),
     path('show/applicant/', views.GetApplicant.as_view()),
     path('show/company/', views.GetCompanies.as_view()),
     path('applicant/<int:applicant_id>', views.ApplicantUpdateView.as_view()),

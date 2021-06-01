@@ -34,6 +34,7 @@ class Applicant(models.Model):
     relocate = models.BooleanField(default=False)
     desc = models.TextField()
     likes = models.ManyToManyField(Like, related_name='likes', blank=True)
+    dislike = models.ManyToManyField('Company', blank=True)
     matches = models.ManyToManyField(Match, related_name='matches', blank=True)
 
     def __str__(self):
@@ -47,6 +48,7 @@ class Company(models.Model):
     skills = models.ManyToManyField(Skill, blank=False)
     desc = models.TextField()
     likes = models.ManyToManyField(Like, related_name='likes_company', blank=True)
+    dislike = models.ManyToManyField(Applicant, blank=True)
     matches = models.ManyToManyField(Match, related_name='matches_company', blank=True)
 
     def __str__(self):
